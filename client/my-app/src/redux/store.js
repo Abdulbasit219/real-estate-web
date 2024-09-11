@@ -2,7 +2,6 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./user/Userslice";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import { persistReducer, persistStore } from "redux-persist";
-import { version } from "react";
 
 const rootReducer = combineReducers({ user: userReducer });
 
@@ -15,7 +14,11 @@ const persisConfig = {
 const persistedReducer = persistReducer(persisConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    })
 });
 
 export const persistor = persistStore(store);

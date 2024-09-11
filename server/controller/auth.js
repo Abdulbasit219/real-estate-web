@@ -60,7 +60,6 @@ export const registerController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
-
   try {
     const { email, password } = req.body;
 
@@ -92,24 +91,73 @@ export const loginController = async (req, res) => {
 
     // jwt token
     const jwtToken = await JWT.sign({ _id: user._id }, process.env.SECRET_KEY);
- 
+
     //send user without password
-    const {password: _, ...rest } = user._doc;
+    const { password: _, ...rest } = user._doc;
+
 
     // cookie
-    res
-      .cookie("access_token", jwtToken, { httpOnly: true })
-      .status(200)
-      .json({
-        success: true,
-        message: 'login successful',
-        user: rest
-      });
+    res.cookie("access_token", jwtToken, { httpOnly: true }).status(200).json({
+      success: true,
+      message: "login successful",
+      user: rest,
+      token: jwtToken
+    });
 
   } catch (error) {
     return res.status(500).send({
       success: false,
       message: "Internal server error",
     });
+  }
+};
+
+export const googleController = async (req, res) => {
+  try {
+    const user = await userModels.findOne({ email: req.body.email });
+    if (user) {
+      // jwt token
+      const jwtToken = await JWT.sign(
+        { _id: user._id },
+        process.env.SECRET_KEY
+      );
+
+      //send user without password
+      const { password: _, ...rest } = user._doc;
+
+      // cookie
+      res
+        .cookie("access_token", jwtToken, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    } else {
+      const generatePassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+
+      //hashpassword
+      const hashedpassword = await hashpassword(generatePassword);
+
+      const newUser = new userModels({
+        name: req.body.name.split(" ").join("").toLowerCase(),
+        email: req.body.email,
+        password: hashedpassword,
+        avatar: req.body.photo,
+      });
+
+      await newUser.save();
+      const jwtToken = await JWT.sign({ id: user._id }, process.env.SECRET_KEY);
+
+      //send user without password
+      const { password: _, ...rest } = user._doc;
+
+      // cookie
+      res
+        .cookie("access_token", jwtToken, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

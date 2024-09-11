@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../components/Loading";
 import toast from "react-hot-toast";
+import OAuth from "../components/OAuth";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const Signup = () => {
       );
       if (data.success) {
         toast.success(data.message);
-        navigate('/signin');
+        navigate("/signin");
       } else {
         toast.error(data.message);
       }
@@ -126,6 +127,9 @@ const Signup = () => {
                 >
                   Sign up
                 </button>
+              </div>
+              <div>
+                <OAuth />
               </div>
             </form>
             <p className="mt-10 text-center text-sm text-gray-500">

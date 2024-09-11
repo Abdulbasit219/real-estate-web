@@ -10,6 +10,7 @@ import {
   signInFalure,
   signInSuccess,
 } from "../redux/user/Userslice";
+import OAuth from "../components/OAuth";
 
 const Signin = () => {
   const [formData, setFormData] = useState({
@@ -38,15 +39,21 @@ const Signin = () => {
       );
       if (data.success === false) {
         dispatch(signInFalure(data.message));
+        toast.error(error);
         return;
       }
+
       dispatch(signInSuccess(data));
       navigate("/");
+      toast.success("Login Successfully");
+
     } catch (error) {
       if (error.response && error.response.data) {
         dispatch(signInFalure(error.response.data.message));
+        toast.error(error.response.data.message); 
       } else {
         dispatch(signInFalure(error.message));
+        toast.error(error.message); 
       }
     }
   };
@@ -120,6 +127,9 @@ const Signin = () => {
                 >
                   Sign in
                 </button>
+              </div>
+              <div>
+                <OAuth />
               </div>
             </form>
             <p className="mt-10 text-center text-sm text-gray-500">
