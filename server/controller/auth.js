@@ -95,15 +95,13 @@ export const loginController = async (req, res) => {
     //send user without password
     const { password: _, ...rest } = user._doc;
 
-
     // cookie
     res.cookie("access_token", jwtToken, { httpOnly: true }).status(200).json({
       success: true,
       message: "login successful",
       user: rest,
-      token: jwtToken
+      token: jwtToken,
     });
-
   } catch (error) {
     return res.status(500).send({
       success: false,
@@ -125,11 +123,16 @@ export const googleController = async (req, res) => {
       //send user without password
       const { password: _, ...rest } = user._doc;
 
-      // cookie
+      //cookie
       res
         .cookie("access_token", jwtToken, { httpOnly: true })
         .status(200)
-        .json(rest);
+        .json({
+          success: true,
+          message: "login successful",
+          user: rest,
+          token: jwtToken,
+        });
     } else {
       const generatePassword =
         Math.random().toString(36).slice(-8) +
@@ -146,16 +149,24 @@ export const googleController = async (req, res) => {
       });
 
       await newUser.save();
-      const jwtToken = await JWT.sign({ id: user._id }, process.env.SECRET_KEY);
+      const jwtToken = await JWT.sign(
+        { _id: newUser._id },
+        process.env.SECRET_KEY
+      );
 
       //send user without password
-      const { password: _, ...rest } = user._doc;
+      const { password: _, ...rest } = newUser._doc;
 
       // cookie
       res
         .cookie("access_token", jwtToken, { httpOnly: true })
         .status(200)
-        .json(rest);
+        .json({
+          success: true,
+          message: "login successful",
+          user: rest,
+          token: jwtToken,
+        });
     }
   } catch (error) {
     console.log(error);

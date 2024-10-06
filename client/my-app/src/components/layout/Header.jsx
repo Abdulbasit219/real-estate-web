@@ -5,6 +5,8 @@ import { ImCross } from "react-icons/im";
 import ".css";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { handleLogout } from "../../utils/utilsFunc";
+import { useDispatch } from "react-redux";
 
 const Header = () => {
   const [showmenu, setShowMenu] = useState(false);
@@ -12,6 +14,8 @@ const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const { currentUser } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
 
   const toggleMenu = () => {
     setShowMenu(!showmenu);
@@ -28,7 +32,7 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`w-full h-[80px] shadow-lg flex justify-around bg-gray-100 items-center z-99 fixed top-0 md:px-16`}
+        className={`w-full h-[80px] shadow-lg flex justify-around bg-gray-100 items-center z-[1000] fixed top-0 md:px-16`}
       >
         {/* logo section */}
         <div className="w-[70%] md:w-[20%] text-center font-bold text-gray-500 text-xl ml-4">
@@ -110,7 +114,7 @@ const Header = () => {
                   {showDropdown && (
                     <div
                       id="dropdown"
-                      className="z-10 absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+                      className="z-50 top-full absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
                     >
                       <ul
                         className="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -126,7 +130,7 @@ const Header = () => {
                         </li>
                         <li>
                           <Link
-                            // to="/signout"
+                            onClick={() => handleLogout(dispatch)}
                             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                           >
                             Sign out

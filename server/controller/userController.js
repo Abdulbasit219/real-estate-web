@@ -26,7 +26,10 @@ export const updateUserController = async (req, res, next) => {
     );
 
     // create new jwt token
-    const jwtToken = await JWT.sign({ _id: updateUser._id }, process.env.SECRET_KEY);
+    const jwtToken = await JWT.sign(
+      { _id: updateUser._id },
+      process.env.SECRET_KEY
+    );
 
     const { password, ...rest } = updateUser._doc;
 
@@ -34,42 +37,33 @@ export const updateUserController = async (req, res, next) => {
       success: true,
       message: "user successfully updated",
       user: rest,
-      token: jwtToken
+      token: jwtToken,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// const { id } = req.params;
-// const { name, email, password, avatar } = req.body;
-
-// const updateData = {};
-// if (name) {
-//   updateData.name = name;
-// } else if (email) {
-//   updateData.email = email;
-// } else if (password) {
-//   updateData.password = password;
-// }else if(avatar){
-//   updateData.avatar = avatar;
-// }
-
-// const updateUser = await userModel.findByIdAndUpdate(id, updateData, {
-//   new: true,
-// });
-
-// if(!updateUser) {
-//   return res.status(404).send({
-//     success: false,
-//     message: 'User not found'
-//   })
-// }
-
-// const { password, ...rest } = updateUser._doc;
-
-// res.status(200).send({
-//   success: true,
-//   message: 'User successfully updated',
-//   user: updateUser
-// })
+export const deleteUser = async (req, res, next) => {
+  // console.log(req.user._id, req.params.id);
+  
+  if (req.user._id !== req.params.id) {
+    return next(errorHandler(401, "You can only delete your own account"));
+  }
+  try {
+    const { id } = req.params;
+    const user = await userModel.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+    res.status(200).send({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

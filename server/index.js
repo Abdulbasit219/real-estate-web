@@ -5,6 +5,7 @@ import connectDB from "./connection.js";
 import routes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
+import lisitingRoutes from "./routes/listingRoutes.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ const port = process.env.PORT;
 
 app.use("/api/v1/auth", routes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/listing", lisitingRoutes);
 
 app.listen(port, () => {
   console.log(`API listening on port ${port}`);
